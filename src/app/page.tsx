@@ -1,170 +1,101 @@
 'use client'
-import Image from 'next/image'
-import { motion, AnimatePresence, useAnimation } from "framer-motion"
-import { useState } from 'react'
-import { useEffect } from 'react'
-import { useInView } from "react-intersection-observer";
+import { useCallback, useEffect, useRef, useState } from "react"
 
-const users = ["Hamzah", "Ali", "Okasha",]
-const stds = ["Hamzah", "Ali", "Okasha",]
+const Page = () => {
+  let [length, setLength] = useState(0)
+  let [numberAllow, setnumberAllow] = useState(false)
+  let [charAllow, setcharAllow] = useState(false)
+  let [password, setPassword] = useState("")
 
-const menu = [
-  {
-    title: "Biryani",
-    description: 'Lazeez Biryani',
-    price: 500,
-    coldDrink: true,
-    image: '/images/biryani.jpg'
-  },
-  {
-    title: "Tikka",
-    description: 'Lazeez Tikka',
-    price: 600,
-    coldDrink: true,
-    image: '/images/tikka.jpg'
-  },
-  {
-    title: "Shawarma",
-    description: 'Lazeez Shawarma',
-    price: 200,
-    coldDrink: true,
-    image: '/images/shawarma.jpg'
-  },
-  {
-    title: "Karhai",
-    description: 'Lazeez Karhai',
-    price: 800,
-    coldDrink: true,
-    image: '/images/karhai.jpeg'
-  },
-  {
-    title: "Fish & Grill",
-    description: 'Lazeez Fish & Grill',
-    price: 900,
-    coldDrink: true,
-    image: '/images/fish.jpg'
-  },
-]
+  const inputRef = useRef<HTMLInputElement>(null);
 
-export default function Home() {
-  const [show, setShow] = useState(false)
-  const controls = useAnimation();
-  const [ref, inView] = useInView();
+  const copyPasswordToClipboard = useCallback(() => {
+    if (inputRef.current) {
+      inputRef.current.select();
+      // Assuming 'password' is defined somewhere
+      window.navigator.clipboard.writeText(password);
+    }
+  }, [password]);
 
-  const fadeInOut = {
-    hidden: { opacity:0, y:-50  },
-    visible: { opacity: 1, y:50 },
-  };
+  const PasswordGenerator = useCallback(()=>{
+    let pass=''
+    let str=
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    if(numberAllow) str += "0123456789"
+    if(charAllow) str += "!@#$%^&*()-_+=`~"
+    for(let i=0; i<length; i++){
+      let char = Math.floor(Math.random()*str.length+1)
+      pass+=str.charAt(char)
+    }
+    setPassword(pass)
+  },[length,numberAllow,charAllow,setPassword])
 
-  // useEffect(() => {
-  //   if (inView) {
-  //     controls.start("visible");
-  //   } else {
-  //     controls.start("hidden");
-  //   }
-  // }, [controls, inView]);
+  useEffect(()=>{
+    PasswordGenerator()
+  },[length,numberAllow,charAllow,PasswordGenerator])
+
   return (
     <>
-      <div className='h-screen'>
-
-      </div>
-      <div className='flex flex-col'>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          transition={{
-            layout: {
-              duration: 1,
-              type: 'spring',
-            }
-          }}
-          layout
-          onClick={() => setShow(!show)} className='p-8 bg-orange-300 w-[50vw]'>
-          {show ? "Not Showing" : "Showing"}
-          {show && (
-            <motion.p>
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nulla, minus alias. Optio id eveniet culpa doloribus commodi eligendi eum, eius ipsum numquam enim, aspernatur perspiciatis est repellendus excepturi voluptatem eaque!
-            </motion.p>
-          )}
-          <div className='w-[90%] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-10'>
-            <AnimatePresence>
-              {show &&
-                menu.map((item, id) => {
-                  return (
-                    <motion.div
-                      ref={ref}
-                      initial="hidden"
-                      animate={controls}
-                      variants={fadeInOut}
-                      exit={{opacity:0, y:-50}}
-                      transition={{ duration: 1.5 }}
-                      onViewportEnter={() => controls.start("visible")}
-                      onViewportLeave={() => controls.start("hidden")}
-                      key={id} className='border bg-yellow-400 m-4 rounded-md p-5 shadow-2xl'>
-                      <Image src={item.image} alt='ronaldo' width={300} height={300} className="w-[300px] object-cover" />
-                      <div className='mt-5'>
-                        <p>{item.title}</p>
-                        <p>{item.description}</p>
-                        <p>{item.price}</p>
-                        <p>{item.coldDrink ? "Pepsi" : "Water"}</p>
-                      </div>
-                    </motion.div>
-                  )
-                })
-              }
-            </AnimatePresence>
-          </div>
-        </motion.button>
-      </div>
-      <div className='h-screen'>
-        {/* <motion.div
-        className='my-6 m-auto h-40 w-40 bg-blue-900'
-        initial={{x:0, y:0, scale:0.4}}
-        animate={{rotate:360, scale:1.5}}
-        exit={{rotate:-360, scale:-0.5}}
-        transition={{
-          duration:3,
-          repeat: Infinity,
-        }}
+    <div className="h-screen w-full duration-500 bg-black">
+      <h1 className="text-4xl text-center text-white">Password Generator</h1>
+      <div className="bg-purple-300 w-full py-4">
+      <div className="flex items-center justify-center gap-x-3">
+        <input type="text"
+        value={password}
+        className="px-2 py-2 text-xl bg-slate-300 rounded-lg"
+        placeholder="Password"
+        readOnly
+        ref={inputRef}
+        />
+        <button className="bg-orange-800 px-3 py-3 rounded-lg"
+        onClick={()=>PasswordGenerator()}>
+          Generate
+        </button>
+        <button
+        className="bg-blue-400 px-3 py-3 rounded-lg"
+        onClick={copyPasswordToClipboard}
         >
-
-        </motion.div> */}
+          Copy</button>
       </div>
+      <div className="flex text-sm gap-x-2 justify-center">
+        <div className="flex items-center gap-x-1">
+          <input type="range" 
+          min={7}
+          max={30}
+          value={length}
+          className="outline-none bg-orange-400"
+          onChange={(e) => {
+            setLength(parseInt(e.target.value, 10));
+          }}
+          />
+          <label className="text-orange-400">Length: {length}</label>
+        </div>
+        <div className="flex items-center gap-x-1">
+          <input type="checkbox" 
+          defaultChecked={numberAllow}
+          id="numberInput"
+          onChange={()=>{
+            setnumberAllow((prev)=>!prev)
+          }}
+          />
+          <label htmlFor="numberInput" className="text-orange-400">Numbers</label>
+        </div>
+        <div className="flex items-center gap-x-1">
+          <input type="checkbox" 
+          defaultChecked={charAllow}
+          id="CharacterInput"
+          onChange={()=>{
+            setcharAllow((prev)=>!prev)
+          }}
+          />
+          <label htmlFor="CharacterInput" className="text-orange-400">Special Characters</label>
+        </div>
+      </div>
+      </div>
+    </div>
     </>
   )
 }
-      {/* <div className='grid grid-cols-12 rounded-full h-screen'>
-      <div className='bg-red-800 p-10 border border-black col-span-3 text-gray-400 text-lg font-bold'>
-        Sidebar
-        <ul>
-        <li>_________________________</li>
-        <li>_________________________</li>
-        <li>_________________________</li>
-        <li>_________________________</li>
-        <li>_________________________</li>
-        </ul>
-      </div>
-      <div className='bg-gray-700 p-10 border border-black col-span-9 text-lg font-bold'>
-        Main Content
-      <ul className='text-gray-400'>
-        <li>_________________________</li>
-        <li>_________________________</li>
-        <li>_________________________</li>
-        <li>_________________________</li>
-        <li>_________________________</li>
-        </ul>
-      </div>
-    </div> */}
-      {/* <div className='grid grid-cols-12 grid-rows-5 gap-2'>
-      <div className='col-span-12 h-20 bg-gray-200 row-span-1'>
-          Navbar
-      </div>
-      <div className='row-span-3 col-span-3 bg-gray-300'>
-        Sidebar
-      </div>
-      <div className='row-span-3 col-span-9 bg-gray-400'>
-          Hero Component 
-      </div>
-      <div className='col-span-12 h-20 bg-gray-500 row-span-1'>
-          Footer
-      </div>
-    </div> */}
+
+
+export default Page
