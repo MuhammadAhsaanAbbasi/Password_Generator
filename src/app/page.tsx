@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 
 const Page = () => {
-  let [length, setLength] = useState(0)
+  let [length, setLength] = useState(8)
   let [numberAllow, setnumberAllow] = useState(false)
   let [charAllow, setcharAllow] = useState(false)
   let [password, setPassword] = useState("")
@@ -36,9 +36,9 @@ const Page = () => {
 
   return (
     <>
-    <div className="h-screen w-full duration-500 bg-black">
-      <h1 className="text-4xl text-center text-white">Password Generator</h1>
-      <div className="bg-purple-300 w-full py-4">
+    <div className="h-screen duration-500 bg-black font-['Baloo_Bhai']">
+      <h1 className="text-5xl py-24 text-center text-white">Password Generator</h1>
+      <div className="bg-purple-300 py-12 m-auto max-w-screen-sm h-48 rounded-md">
       <div className="flex items-center justify-center gap-x-3">
         <input type="text"
         value={password}
@@ -57,7 +57,7 @@ const Page = () => {
         >
           Copy</button>
       </div>
-      <div className="flex text-sm gap-x-2 justify-center">
+      <div className="flex text-sm gap-x-4 justify-center py-2">
         <div className="flex items-center gap-x-1">
           <input type="range" 
           min={7}
@@ -68,7 +68,7 @@ const Page = () => {
             setLength(parseInt(e.target.value, 10));
           }}
           />
-          <label className="text-orange-400">Length: {length}</label>
+          <label className="text-orange-400 text-lg">Length: {length}</label>
         </div>
         <div className="flex items-center gap-x-1">
           <input type="checkbox" 
@@ -78,7 +78,7 @@ const Page = () => {
             setnumberAllow((prev)=>!prev)
           }}
           />
-          <label htmlFor="numberInput" className="text-orange-400">Numbers</label>
+          <label htmlFor="numberInput" className="text-orange-400 text-lg">Numbers</label>
         </div>
         <div className="flex items-center gap-x-1">
           <input type="checkbox" 
@@ -88,7 +88,7 @@ const Page = () => {
             setcharAllow((prev)=>!prev)
           }}
           />
-          <label htmlFor="CharacterInput" className="text-orange-400">Special Characters</label>
+          <label htmlFor="CharacterInput" className="text-orange-400 text-lg">Special Characters</label>
         </div>
       </div>
       </div>
